@@ -85,9 +85,24 @@ class Assignment(db.Model):
         return assignment
 
     @classmethod
+    def mark_or_regrade(cls, _id, grade, auth_principal: AuthPrincipal):
+        assignment = Assignment.get_by_id(_id)
+        assertions.assert_found(assignment, 'No assignment with this id was found')
+
+        assignment.grade = grade
+        assignment.state = AssignmentStateEnum.GRADED
+        db.session.flush()
+
+        return assignment
+
+    @classmethod
     def get_assignments_by_student(cls, student_id):
         return cls.filter(cls.student_id == student_id).all()
 
     @classmethod
     def get_assignments_by_teacher(cls):
         return cls.query.all()
+    
+    @classmethod
+    def get_assignments_by_state(cls):
+        return cls.filter(cls.state == "SUBMITTED" or cls.state == "GRADED").all()
