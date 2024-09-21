@@ -1,7 +1,9 @@
 import enum
+from operator import or_
 from core import db
 from core.apis.decorators import AuthPrincipal
 from core.libs import helpers, assertions
+from core.libs.exceptions import FyleError
 from core.models.teachers import Teacher
 from core.models.students import Student
 from sqlalchemy.types import Enum as BaseEnum
@@ -94,15 +96,27 @@ class Assignment(db.Model):
         db.session.flush()
 
         return assignment
+    
+    @classmethod
+    def submit(cls, _id, teacher_id, auth_principal):
+        assignment = cls.query.filter_by(id=_id, student_id=auth_principal.student_id).first()
+        
+        if assignment.state != 'DRAFT':
+            raise FyleError('only a draft assignment can be submitted')
+
+        assignment.teacher_id = teacher_id
+        assignment.state = 'SUBMITTED'
+        
+        return assignment
 
     @classmethod
     def get_assignments_by_student(cls, student_id):
         return cls.filter(cls.student_id == student_id).all()
 
     @classmethod
-    def get_assignments_by_teacher(cls):
-        return cls.query.all()
+    def get_assignments_by_teacher(cls, teacher_id):
+        return cls.filter(cls.teacher_id == teacher_id).all()
     
     @classmethod
     def get_assignments_by_state(cls):
-        return cls.filter(cls.state == "SUBMITTED" or cls.state == "GRADED").all()
+        return cls.query.filter(or_(cls.state == "SUBMITTED", cls.state == "GRADED")).all()

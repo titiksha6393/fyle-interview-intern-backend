@@ -9,7 +9,7 @@ from .schema import AssignmentSchema, AssignmentGradeSchema
 principal_assignments_resources = Blueprint('principal_assignments_resources', __name__)
 
 
-@principal_assignments_resources.route('/principal/assignments', methods=['GET'], strict_slashes=False)
+@principal_assignments_resources.route('/assignments', methods=['GET'], strict_slashes=False)
 @decorators.authenticate_principal
 def list_assignments(p):
     """Lists all submitted and graded assignments"""
@@ -18,7 +18,7 @@ def list_assignments(p):
     return APIResponse.respond(data=all_assignments_dump)
 
 
-@principal_assignments_resources.route('/principal/teachers', methods=['GET'], strict_slashes=False)
+@principal_assignments_resources.route('/teachers', methods=['GET'], strict_slashes=False)
 @decorators.authenticate_principal
 def list_all_teachers(p):
     """Lists all the teachers"""
@@ -28,7 +28,7 @@ def list_all_teachers(p):
     return APIResponse.respond(data=teachers_dump)
 
 
-@principal_assignments_resources.route('/principal/assignments/grade', methods=['POST'], strict_slashes=False)
+@principal_assignments_resources.route('/assignments/grade', methods=['POST'], strict_slashes=False)
 @decorators.accept_payload
 @decorators.authenticate_principal
 def grade_assignment(p, incoming_payload):
