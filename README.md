@@ -51,8 +51,9 @@ bash run.sh
 
 ```
 pytest -vvv -s tests/
+pytest --cov
+coverage report -m
 
 # for test coverage report
-# pytest --cov
 # open htmlcov/index.html
 ```

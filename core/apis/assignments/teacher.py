@@ -31,7 +31,9 @@ def grade_assignment(p, incoming_payload):
 
     if assignment.teacher_id != p.teacher_id:
         return make_response(jsonify({"error": "FyleError"}), 400)
-
+    
+    if assignment.state != "SUBMITTED":
+        return make_response(jsonify({"error": "FyleError"}), 400)
 
     graded_assignment = Assignment.mark_grade(
         _id=grade_assignment_payload.id,

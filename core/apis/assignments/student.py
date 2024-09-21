@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify, make_response
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
@@ -23,6 +23,10 @@ def list_assignments(p):
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
     assignment = AssignmentSchema().load(incoming_payload)
+    
+    if 'content' not in incoming_payload or incoming_payload['content'] is None: 
+        return make_response(jsonify({"error": "FyleError"}), 400)
+        
     assignment.student_id = p.student_id
 
     upserted_assignment = Assignment.upsert(assignment)
@@ -37,6 +41,11 @@ def upsert_assignment(p, incoming_payload):
 def submit_assignment(p, incoming_payload):
     """Submit an assignment"""
     submit_assignment_payload = AssignmentSubmitSchema().load(incoming_payload)
+
+    assignment = Assignment.query.get(submit_assignment_payload.id)
+
+    if assignment.state != "DRAFT":
+        return make_response(jsonify({"error": "FyleError", "message": "only a draft assignment can be submitted"}), 400)
 
     submitted_assignment = Assignment.submit(
         _id=submit_assignment_payload.id,

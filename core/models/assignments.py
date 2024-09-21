@@ -1,5 +1,7 @@
 import enum
 from operator import or_
+
+from flask import jsonify, make_response
 from core import db
 from core.apis.decorators import AuthPrincipal
 from core.libs import helpers, assertions
@@ -102,7 +104,7 @@ class Assignment(db.Model):
         assignment = cls.query.filter_by(id=_id, student_id=auth_principal.student_id).first()
         
         if assignment.state != 'DRAFT':
-            raise FyleError('only a draft assignment can be submitted')
+            return make_response(jsonify({"error": "FyleError"}), 400)
 
         assignment.teacher_id = teacher_id
         assignment.state = 'SUBMITTED'
