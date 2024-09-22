@@ -57,3 +57,28 @@ coverage report -m
 # for test coverage report
 # open htmlcov/index.html
 ```
+
+### Run the Application with docker
+
+Docker: Ensure Docker is installed on your machine. You can download it from using sudo apt pip install docker.
+Docker Compose: Docker Compose is required to manage multi-container Docker applications. This usually comes bundled with Docker.
+
+```
+# Build the Docker Image
+docker-compose build
+# Run the application
+docker-compose up
+# Stop the application
+docker-compose down
+
+# For Troubleshooting you can use
+docker-compose logs
+
+# If you encounter permission issues while building, try running with sudo (for Linux):
+sudo docker-compose build
+sudo docker-compose up
+
+# If you make changes to your code or Docker configurations, you’ll need to rebuild the Docker image:
+docker-compose up --build
+
+```
